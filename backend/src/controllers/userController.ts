@@ -7,6 +7,7 @@ import ErrorHandler from "../middleware/error";
 import { generateToken } from "../utils/jwtToken";
 import bcrypt from "bcrypt";
 import { AuthenticatedRequest } from "../../types/express";
+import { userType } from "../../types/express";
 import { generateResetToken } from "../utils/generateResetToken";
 import { sendEmail } from "../utils/sendEmail";
 import crypto from "crypto";
@@ -38,10 +39,20 @@ export const registerUser = catchAsyncErrors(
         email,
         password: hashedPassword,
         },
+        select:{
+          id: true,
+          username: true,
+          email: true,
+          avatarId: true,
+          avatarUrl: true,
+          aboutMe: true,
+          password: true,
+          // exclude password and reset fields
+        }
     });
 
     // 8. Send token
-    generateToken(user.id, "User Registered", 201, res);
+    generateToken(user, "User Registered", 201, res);
   }
 );
 
@@ -54,7 +65,18 @@ export const loginUser = catchAsyncErrors(
     }
 
     // Find user by email
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+      where: { email },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        avatarId: true,
+        avatarUrl: true,
+        aboutMe: true,
+        password: true,
+        // exclude password and reset fields
+    } });
 
     if (!user) {
       return next(new ErrorHandler("Invalid email or password", 401));
@@ -68,7 +90,7 @@ export const loginUser = catchAsyncErrors(
     }
 
     // Send token
-    generateToken(user.id, "Login successful", 200, res);
+    generateToken(user, "Login successful", 200, res);
   }
 );
 
@@ -152,6 +174,28 @@ export const getUser = catchAsyncErrors(
     res.status(200).json({
     success: true,
     user: req.user
+  });
+  }
+);
+
+export const getUserNoLogin = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const id = process.env.USER_ID;
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        avatarId: true,
+        avatarUrl: true,
+        aboutMe: true,
+        // exclude password and reset fields
+      },
+    });
+    res.status(200).json({
+    success: true,
+    user
   });
   }
 );
@@ -290,5 +334,5 @@ export const resetPassword = catchAsyncErrors(async (req: Request, res: Response
   });
 
   // Optionally re-login
-  generateToken(user.id, "Password Reset Successfully!", 200, res);
+  generateToken(user, "Password Reset Successfully!", 200, res);
 });

@@ -1,5 +1,6 @@
 import { Response } from "express";
 import jwt from "jsonwebtoken";
+import { userType } from "../../types/express";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -13,12 +14,12 @@ const createJwtToken = (userId: string): string => {
 
 // Main token function
 export const generateToken = (
-  userId: string,
+  user: userType,
   message: string,
   statusCode: number,
   res: Response
 ): void => {
-  const token = createJwtToken(userId);
+  const token = createJwtToken(user.id);
 
   res
     .status(statusCode)
@@ -35,6 +36,6 @@ export const generateToken = (
       success: true,
       message,
       token,
-      userId,
+      user,
     });
 };

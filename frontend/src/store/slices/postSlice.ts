@@ -7,72 +7,72 @@ const postSlice = createSlice({
   initialState: {
     loading: false,
     posts: [],
-    error: null,
+    postError: null,
     message: null,
   },
   reducers: {
     getAllPostRequest(state) {
       state.loading = true;
       state.posts = [];
-      state.error = null;
+      state.postError = null;
     },
     getAllPostSuccess(state, action) {
       state.posts = action.payload;
       state.loading = false;
-      state.error = null;
+      state.postError = null;
     },
     getAllPostFailed(state, action) {
       state.posts = state.posts;
       state.loading = false;
-      state.error = action.payload;
+      state.postError = action.payload;
     },
     deletePostRequest(state) {
       state.message = null;
       state.loading = true;
-      state.error = null;
+      state.postError = null;
     },
     deletePostSuccess(state, action) {
       state.message = action.payload;
       state.loading = false;
-      state.error = null;
+      state.postError = null;
     },
     deletePostFailed(state, action) {
       state.message = null;
       state.loading = false;
-      state.error = action.payload;
+      state.postError = action.payload;
     },
     updatePostRequest(state) {
       state.message = null;
       state.loading = true;
-      state.error = null;
+      state.postError = null;
     },
     updatePostSuccess(state, action) {
       state.message = action.payload;
       state.loading = false;
-      state.error = null;
+      state.postError = null;
     },
     updatePostFailed(state, action) {
       state.message = null;
       state.loading = false;
-      state.error = action.payload;
+      state.postError = action.payload;
     },
     addPostRequest(state) {
       state.message = null;
       state.loading = true;
-      state.error = null;
+      state.postError = null;
     },
     addPostSuccess(state, action) {
       state.message = action.payload;
       state.loading = false;
-      state.error = null;
+      state.postError = null;
     },
     addPostFailed(state, action) {
       state.message = null;
       state.loading = false;
-      state.error = action.payload;
+      state.postError = action.payload;
     },
     resetPostSlice(state) {
-      state.error = null;
+      state.postError = null;
       state.posts = state.posts;
       state.message = null;
       state.loading = false;
@@ -80,20 +80,20 @@ const postSlice = createSlice({
     likePostRequest(state) {
       state.message = null;
       state.loading = true;
-      state.error = null;
+      state.postError = null;
     },
     likePostSuccess(state, action) {
       state.message = action.payload;
       state.loading = false;
-      state.error = null;
+      state.postError = null;
     },
     likePostFailed(state, action) {
       state.message = null;
       state.loading = false;
-      state.error = action.payload;
+      state.postError = action.payload;
     },
     clearAllErrors(state) {
-      state.error = null;
+      state.postError = null;
       state.posts = state.posts;
     },
   },
@@ -118,11 +118,12 @@ export const addNewPost = (title: string, content: JSON) => async (dispatch: App
 };
 
 
-export const getAllPosts = () => async (dispatch:AppDispatch): Promise<void> => {
+export const getAllPosts = (pageToLoad: number, limit: number) => async (dispatch:AppDispatch): Promise<void> => {
     dispatch(postSlice.actions.getAllPostRequest());
     try {
         const { data } = await axios.get("http://localhost:4000/v.1/api/post/get/all",
         {
+            params: { page: pageToLoad, limit },
             withCredentials: true
         });
 

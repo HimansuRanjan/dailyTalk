@@ -13,6 +13,7 @@ import UpdatePassword from './pages/UpdatePassword'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import ViewPostComment from './pages/ViewPostComment'
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -20,15 +21,16 @@ function App() {
      <Router>
       <Routes>
         <Route path='/' element={<HomePage/>}/>
+        <Route path='/profile' element={<Profile/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/admin' element={<AdminPage/>}/>
-        <Route path='/profile' element={<Account/>}/>
+        <Route path='/admin/profile' element={<Account/>}/>
         <Route path='/admin/post' element={<CreatePost/>}/>
-        <Route path='/view/post' element={<ViewPostComment/>}/>
+        <Route path='/view/post/:id' element={<ViewPostComment/>}/>
         <Route path='/update/profile' element={<UpdateProfile/>}/>
         <Route path='/update/password' element={<UpdatePassword/>}/>
         <Route path='/password/forgot' element={<ForgotPassword/>}/>
-        <Route path='/password/reset' element={<ResetPassword/>}/>
+        <Route path='/password/reset/:token' element={<ResetPassword/>}/>
 
       </Routes>
      </Router>
